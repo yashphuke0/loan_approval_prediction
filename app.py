@@ -430,9 +430,11 @@ with tab2:
         st.markdown('<div class="key-stat-title">F1 Score</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="key-stat-value">{f1:.2%}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-    
+
 
     # Feature importance and confusion matrix in two columns
+
+
 
     # Feature importance
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
@@ -449,22 +451,21 @@ with tab2:
     st.pyplot(fig)
     st.markdown('</div>', unsafe_allow_html=True)
 
-    
-    # Confusion matrix
+    col1, col2 = st.columns(2)
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown("### Confusion Matrix")
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
-    ax.set_xlabel('Predicted Label')
-    ax.set_ylabel('True Label')
-    ax.set_title('Confusion Matrix')
-    ax.set_xticklabels(['Rejected', 'Approved'])
-    ax.set_yticklabels(['Rejected', 'Approved'])
-    st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
+    with col1:
+        # Confusion matrix
+        st.markdown("### Confusion Matrix")
+        fig, ax = plt.subplots(figsize=(4, 3))
+        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
+        ax.set_xlabel('Predicted Label')
+        ax.set_ylabel('True Label')
+        ax.set_title('Confusion Matrix')
+        ax.set_xticklabels(['Rejected', 'Approved'])
+        ax.set_yticklabels(['Rejected', 'Approved'])
+        st.pyplot(fig)
 
-   
-        
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Key insights based on the model
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
@@ -475,31 +476,17 @@ with tab2:
     with col1:
         st.markdown('<div class="feature-box">', unsafe_allow_html=True)
         st.markdown("#### Top Positive Factors")
-        st.markdown("""
-        • **Credit History** - Most critical for approval
-        • **Semi-urban Property Area** - Better approval rates
-        • **Graduate Education** - Improves chances
-        """)
+        st.markdown(""" • **Credit History** - Most critical for approval""")
+        st.markdown(""" • **Semi-urban Property Area** - Better approval rates""")
+        st.markdown(""" • **Graduate Education** - Improves chances""")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
         st.markdown('<div class="feature-box">', unsafe_allow_html=True)
         st.markdown("#### Risk Factors")
-        st.markdown("""
-        • **Poor Credit History** - Strong indicator for rejection
-        • **High Loan Amount** relative to income
-        • **Rural Property Areas** - Lower approval rates
-        """)
+        st.markdown(""" • **Poor Credit History** - Strong indicator for rejection""")
+        st.markdown(""" • **High Loan Amount** relative to income""")
+        st.markdown(""" • **Rural Property Areas** - Lower approval rates""")
         st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-
-    # Footer
-    st.markdown("---")
-    st.markdown("""
-        <div style="text-align: center">
-            <p>This loan prediction system is for demonstration purposes only and should not be used for actual financial decisions.</p>
-            <p>© 2025 Loan Approval Prediction System</p>
-        </div>
-        """, unsafe_allow_html=True)
