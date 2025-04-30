@@ -271,33 +271,33 @@ with tab2:
     # Feature importance and confusion matrix in two columns
 
     # Feature importance
-        st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-        st.markdown("### Feature Importance")
-        feature_importance_df = pd.DataFrame({
-            'Feature': feature_names,
-            'Importance': np.abs(feature_importance)
-        }).sort_values(by='Importance', ascending=False)
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown("### Feature Importance")
+    feature_importance_df = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': np.abs(feature_importance)
+    }).sort_values(by='Importance', ascending=False)
 
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
-        ax.set_title('Feature Importance for Loan Approval')
-        ax.set_xlabel('Absolute Importance')
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
+    ax.set_title('Feature Importance for Loan Approval')
+    ax.set_xlabel('Absolute Importance')
+    st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     
-        # Confusion matrix
-        st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-        st.markdown("### Confusion Matrix")
-        fig, ax = plt.subplots(figsize=(8, 6))
-        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
-        ax.set_xlabel('Predicted Label')
-        ax.set_ylabel('True Label')
-        ax.set_title('Confusion Matrix')
-        ax.set_xticklabels(['Rejected', 'Approved'])
-        ax.set_yticklabels(['Rejected', 'Approved'])
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Confusion matrix
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown("### Confusion Matrix")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
+    ax.set_xlabel('Predicted Label')
+    ax.set_ylabel('True Label')
+    ax.set_title('Confusion Matrix')
+    ax.set_xticklabels(['Rejected', 'Approved'])
+    ax.set_yticklabels(['Rejected', 'Approved'])
+    st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
 
    
         
