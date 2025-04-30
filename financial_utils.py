@@ -37,7 +37,7 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
         dict: Dictionary containing financial check results
     """
     # Convert loan amount from thousands to actual amount
-    loan_amount_actual = loan_amount * 1000
+    loan_amount_actual = loan_amount
 
     total_income = applicant_income + coapplicant_income
     monthly_income = total_income
@@ -50,7 +50,7 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
 
     # Calculate debt to income ratio (monthly) - including the new loan EMI
     total_monthly_debt = monthly_emi + existing_debt
-    debt_to_income_ratio = total_monthly_debt / monthly_income if monthly_income > 0 else float('inf')
+    debt_to_income_ratio =total_monthly_debt / monthly_income if monthly_income > 0 else float('inf')
 
     # Check if the applicant can afford the monthly EMI
     affordable = monthly_emi <= (monthly_income * 0.5)  # Rule of thumb: EMI should not exceed 50% of income
