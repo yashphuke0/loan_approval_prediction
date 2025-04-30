@@ -213,7 +213,7 @@ with tab1:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Income to loan ratio calculation
-    income_loan_ratio = (applicant_income + coapplicant_income) / (loan_amount * 1000) if loan_amount > 0 else 0
+    income_loan_ratio = (applicant_income + coapplicant_income) / (loan_amount ) if loan_amount > 0 else 0
 
     # Prediction button
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -277,7 +277,7 @@ with tab1:
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             affordable_status = "✅" if financial_checks["affordable"] else "❌"
-            income_percentage = financial_checks["monthly_emi"] / (applicant_income + coapplicant_income) * 100
+            income_percentage = financial_checks["monthly_emi"] / (applicant_income + coapplicant_income)
             st.metric("Affordability", f"{income_percentage:.4f}% of Income {affordable_status}")
             st.markdown('</div>', unsafe_allow_html=True)
 
