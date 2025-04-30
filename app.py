@@ -277,8 +277,8 @@ with tab1:
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             affordable_status = "✅" if financial_checks["affordable"] else "❌"
-            income_percentage = financial_checks["monthly_emi"] / (applicant_income + coapplicant_income)
-            st.metric("Affordability", f"{income_percentage:.4f}% of Income {affordable_status}")
+            income_percentage = (financial_checks["monthly_emi"] / (applicant_income + coapplicant_income))*100
+            st.metric("Affordability", f"{income_percentage:.2f}% of Income {affordable_status}")
             st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
