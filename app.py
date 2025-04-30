@@ -46,7 +46,7 @@ st.markdown("""
 
     /* Card styles */
     .metric-card {
-        background-color: #000000;
+        background-color: #ffffff;
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -173,163 +173,9 @@ model, scaler, X_test, y_test, y_pred, accuracy, precision, recall, f1, conf_mat
     df)
 
 # Create tabs for different sections
-tab1, tab2, tab3 = st.tabs(["📊 Data Analysis", "🔍 Model Insights", "🧮 Prediction"])
+tab1, tab2 = st.tabs([ "🧮 Prediction", "🔍 Model Insights"])
 
 with tab1:
-    st.markdown('<h2 class="sub-header">Exploratory Data Analysis</h2>', unsafe_allow_html=True)
-
-    # Display raw data sample
-    with st.expander("View Raw Data Sample"):
-        st.dataframe(raw_df.head())
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        # Loan Status Distribution
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### Loan Status Distribution")
-        loan_status_counts = raw_df['Loan_Status'].value_counts()
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.pie(loan_status_counts, labels=loan_status_counts.index, autopct='%1.1f%%',
-               colors=['#1E88E5', '#FFC107'], startangle=90, explode=[0, 0.1])
-        ax.set_title('Loan Approval Distribution')
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Credit History vs. Loan Status
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### Credit History vs. Loan Status")
-        credit_loan_data = pd.crosstab(raw_df['Credit_History'], raw_df['Loan_Status'])
-        fig, ax = plt.subplots(figsize=(8, 6))
-        credit_loan_data.plot(kind='bar', stacked=True, ax=ax, color=['#FFC107', '#1E88E5'])
-        ax.set_xlabel('Credit History (1=Good, 0=Bad)')
-        ax.set_ylabel('Count')
-        ax.set_title('Credit History vs. Loan Status')
-        ax.legend(['Rejected', 'Approved'])
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        # Property Area vs. Loan Status
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### Property Area vs. Loan Status")
-        property_loan_data = pd.crosstab(raw_df['Property_Area'], raw_df['Loan_Status'])
-        fig, ax = plt.subplots(figsize=(8, 6))
-        property_loan_data.plot(kind='bar', stacked=True, ax=ax, color=['#FFC107', '#1E88E5'])
-        ax.set_xlabel('Property Area')
-        ax.set_ylabel('Count')
-        ax.set_title('Property Area vs. Loan Status')
-        ax.legend(['Rejected', 'Approved'])
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Income Distribution
-        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-        st.markdown("### Income Distribution")
-        fig, ax = plt.subplots(figsize=(8, 6))
-        sns.histplot(data=raw_df, x='ApplicantIncome', kde=True, ax=ax, color='#2563EB')
-        ax.set_title('Applicant Income Distribution')
-        ax.set_xlabel('Applicant Income')
-        st.pyplot(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-with tab2:
-    st.markdown('<h2 class="sub-header">Model Performance & Feature Importance</h2>', unsafe_allow_html=True)
-
-    # Model metrics in a clean dashboard style
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown('<h3 style="font-size: 1.3rem; color: #3B82F6; margin-bottom: 15px;">Model Performance</h3>',
-                unsafe_allow_html=True)
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">Accuracy</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="key-stat-value">85.26%</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">Precision</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="key-stat-value">{precision:.2%}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col3:
-        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">Recall</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="key-stat-value">{recall:.2%}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col4:
-        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">F1 Score</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="key-stat-value">{f1:.2%}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-
-    # Feature importance and confusion matrix in two columns
-
-    # Feature importance
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown("### Feature Importance")
-    feature_importance_df = pd.DataFrame({
-        'Feature': feature_names,
-        'Importance': np.abs(feature_importance)
-    }).sort_values(by='Importance', ascending=False)
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
-    ax.set_title('Feature Importance for Loan Approval')
-    ax.set_xlabel('Absolute Importance')
-    st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    
-    # Confusion matrix
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown("### Confusion Matrix")
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
-    ax.set_xlabel('Predicted Label')
-    ax.set_ylabel('True Label')
-    ax.set_title('Confusion Matrix')
-    ax.set_xticklabels(['Rejected', 'Approved'])
-    ax.set_yticklabels(['Rejected', 'Approved'])
-    st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-   
-        
-
-    # Key insights based on the model
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown("### Key Factors Affecting Approval")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown('<div class="feature-box">', unsafe_allow_html=True)
-        st.markdown("#### Top Positive Factors")
-        st.markdown("""
-        • **Credit History** - Most critical for approval
-        • **Semi-urban Property Area** - Better approval rates
-        • **Graduate Education** - Improves chances
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="feature-box">', unsafe_allow_html=True)
-        st.markdown("#### Risk Factors")
-        st.markdown("""
-        • **Poor Credit History** - Strong indicator for rejection
-        • **High Loan Amount** relative to income
-        • **Rural Property Areas** - Lower approval rates
-        """)
-        st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with tab3:
     st.markdown('<h2 class="sub-header">Loan Approval Prediction</h2>', unsafe_allow_html=True)
 
     # Input form with cleaner layout
@@ -461,7 +307,6 @@ with tab3:
         st.markdown("### Final Prediction Result")
 
         if final_approval:
-            st.balloons()
             st.markdown('<div class="prediction-box" style="background-color: #DCEDC8;">', unsafe_allow_html=True)
             st.markdown(f"### ✅ Loan is likely to be *APPROVED*!")
             st.markdown(f"### Model Confidence: {probability[1]:.2%}")
@@ -472,11 +317,11 @@ with tab3:
             st.markdown(f"### ❌ Loan is likely to be *REJECTED*.")
 
             if model_prediction == 1 and not financial_checks["financially_feasible"]:
-                st.markdown(f"### Model Confidence: {probability[1]:.2%}")
+                st.markdown(f"### Model Confidence for Approval: {probability[1]:.2%}")
                 st.markdown(f"### Financial Assessment: FAILED")
                 st.markdown("### (Rejected due to financial feasibility checks)")
             else:
-                st.markdown(f"### Model Confidence: {probability[0]:.2%}")
+                st.markdown(f"### Model Confidence for Rejection: {probability[0]:.2%}")
                 if not financial_checks["financially_feasible"]:
                     st.markdown(f"### Financial Assessment: FAILED")
                 else:
@@ -549,6 +394,104 @@ with tab3:
             if not negative_impacts.empty and "Property_Area" in negative_impacts['Feature'].values:
                 st.write(
                     "✨ Property area appears to negatively impact your approval - consider properties in areas with higher approval rates")
+
+
+
+with tab2:
+    st.markdown('<h2 class="sub-header">Model Performance & Feature Importance</h2>', unsafe_allow_html=True)
+
+    # Model metrics in a clean dashboard style
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown('<h3 style="font-size: 1.3rem; color: #3B82F6; margin-bottom: 15px;">Model Performance</h3>',
+                unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title">Accuracy</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="key-stat-value">85.26%</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title">Precision</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="key-stat-value">{precision:.2%}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col3:
+        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title">Recall</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="key-stat-value">{recall:.2%}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col4:
+        st.markdown('<div class="key-stat">', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title">F1 Score</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="key-stat-value">{f1:.2%}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+
+    # Feature importance and confusion matrix in two columns
+
+    # Feature importance
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown("### Feature Importance")
+    feature_importance_df = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': np.abs(feature_importance)
+    }).sort_values(by='Importance', ascending=False)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
+    ax.set_title('Feature Importance for Loan Approval')
+    ax.set_xlabel('Absolute Importance')
+    st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    
+    # Confusion matrix
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown("### Confusion Matrix")
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
+    ax.set_xlabel('Predicted Label')
+    ax.set_ylabel('True Label')
+    ax.set_title('Confusion Matrix')
+    ax.set_xticklabels(['Rejected', 'Approved'])
+    ax.set_yticklabels(['Rejected', 'Approved'])
+    st.pyplot(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+   
+        
+
+    # Key insights based on the model
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    st.markdown("### Key Factors Affecting Approval")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="feature-box">', unsafe_allow_html=True)
+        st.markdown("#### Top Positive Factors")
+        st.markdown("""
+        • **Credit History** - Most critical for approval
+        • **Semi-urban Property Area** - Better approval rates
+        • **Graduate Education** - Improves chances
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="feature-box">', unsafe_allow_html=True)
+        st.markdown("#### Risk Factors")
+        st.markdown("""
+        • **Poor Credit History** - Strong indicator for rejection
+        • **High Loan Amount** relative to income
+        • **Rural Property Areas** - Lower approval rates
+        """)
+        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
