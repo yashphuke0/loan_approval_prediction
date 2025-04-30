@@ -99,7 +99,7 @@ st.markdown("""
         height: 2px;
     }
     .key-stat-title {
-        color: #86EFAC;
+        color: #ADD8E6;
         font-size: 1.0rem;
         font-weight: 400;
         margin-bottom: 0.5rem;
@@ -403,7 +403,7 @@ with tab2:
 
     # Model metrics in a clean dashboard style
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown('<h3 style="font-size: 1.3rem; color: #86EFAC; margin-bottom: 15px;">Model Performance</h3>',
+    st.markdown('<h3 style="font-size: 1.3rem; color: #ADD8E6; margin-bottom: 15px;">Model Performance</h3>',
                 unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns(4)
@@ -466,7 +466,7 @@ with tab2:
         ax.set_yticklabels(['Rejected', 'Approved'])
         st.pyplot(fig)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+    
 
     # Key insights based on the model
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
