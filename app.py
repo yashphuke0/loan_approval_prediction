@@ -410,13 +410,13 @@ with tab2:
 
     with col1:
         st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">Accuracy</div>', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title" style="color: #ADD8E6" >Accuracy</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="key-stat-value">85.26%</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
         st.markdown('<div class="key-stat">', unsafe_allow_html=True)
-        st.markdown('<div class="key-stat-title">Precision</div>', unsafe_allow_html=True)
+        st.markdown('<div class="key-stat-title" style="color: #ADD8E6" >Precision</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="key-stat-value">{precision:.2%}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
