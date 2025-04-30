@@ -38,7 +38,7 @@ st.markdown("""
     .dashboard-container {
         rgba(239, 246, 255, 0.8);
         border-radius: 8px;
-        padding: 0.5rem;
+        padding: 0.7rem;
         margin-bottom: 1.5rem;
         border: 1px solid #E2E8F0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
