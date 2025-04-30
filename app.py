@@ -100,12 +100,12 @@ st.markdown("""
     }
     .key-stat-title {
         color: #ADD8E6;
-        font-size: 1.0rem;
+        font-size: 1.2rem;
         font-weight: 400;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
     }
     .key-stat-value {
-        color: #E2E8F0;
+        color: #ADD8E6;
         font-size: 2.0rem;
         font-weight: 600;
     }
