@@ -99,15 +99,15 @@ st.markdown("""
         height: 2px;
     }
     .key-stat-title {
-        color: #94A3B8;
-        font-size: 0.9rem;
-        font-weight: 600;
+        color: #86EFAC;
+        font-size: 1.0rem;
+        font-weight: 400;
         margin-bottom: 0.5rem;
     }
     .key-stat-value {
-        color: #94A3B8;
-        font-size: 1.5rem;
-        font-weight: 700;
+        color: #E2E8F0;
+        font-size: 2.0rem;
+        font-weight: 600;
     }
 
     /* Feature box */
@@ -403,7 +403,7 @@ with tab2:
 
     # Model metrics in a clean dashboard style
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    st.markdown('<h3 style="font-size: 1.3rem; color: #3B82F6; margin-bottom: 15px;">Model Performance</h3>',
+    st.markdown('<h3 style="font-size: 1.3rem; color: #86EFAC; margin-bottom: 15px;">Model Performance</h3>',
                 unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns(4)
