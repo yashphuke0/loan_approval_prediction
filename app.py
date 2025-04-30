@@ -446,7 +446,7 @@ with tab2:
             'Importance': np.abs(feature_importance)
         }).sort_values(by='Importance', ascending=False)
     
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(12, 5))
         sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
         ax.set_title('Feature Importance for Loan Approval')
         ax.set_xlabel('Absolute Importance')
