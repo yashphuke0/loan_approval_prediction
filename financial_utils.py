@@ -56,8 +56,8 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
     affordable = monthly_emi <= (monthly_income * 0.5)  # Rule of thumb: EMI should not exceed 50% of income
 
     # Check if ratios are within acceptable limits
-    loan_to_income_ok = loan_to_income_ratio <= 0.4
-    debt_to_income_ok = debt_to_income_ratio <= 0.43
+    loan_to_income_ok = loan_to_income_ratio <= 40
+    debt_to_income_ok = debt_to_income_ratio <= 43
 
     return {
         "monthly_emi": monthly_emi,
