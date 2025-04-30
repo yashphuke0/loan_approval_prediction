@@ -100,12 +100,12 @@ st.markdown("""
     }
     .key-stat-title {
         color: #ADD8E6;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         font-weight: 400;
         margin-bottom: 0.3rem;
     }
     .key-stat-value {
-        color: #ADD8E6;
+        color: #e5f5fb;
         font-size: 2.0rem;
         font-weight: 600;
     }
@@ -438,7 +438,7 @@ with tab2:
 
 
     # Feature importance
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    
     st.markdown("### Feature Importance")
     feature_importance_df = pd.DataFrame({
         'Feature': feature_names,
