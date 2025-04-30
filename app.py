@@ -90,7 +90,7 @@ st.markdown("""
 
     /* Key stat styles */
     .key-stat {
-        background-color: #000000;
+        background-color: #ffffff;
         border-radius: 8px;
         padding: 1rem;
         border-top: 3px solid #3B82F6;
@@ -112,7 +112,7 @@ st.markdown("""
 
     /* Feature box */
     .feature-box {
-        background-color: #000000;
+        background-color: #ffffff;
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 1rem;
@@ -269,10 +269,8 @@ with tab2:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Feature importance and confusion matrix in two columns
-    col1, col2 = st.columns(2)
 
-    with col1:
-        # Feature importance
+    # Feature importance
         st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
         st.markdown("### Feature Importance")
         feature_importance_df = pd.DataFrame({
@@ -287,7 +285,7 @@ with tab2:
         st.pyplot(fig)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with col2:
+    
         # Confusion matrix
         st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
         st.markdown("### Confusion Matrix")
@@ -300,6 +298,9 @@ with tab2:
         ax.set_yticklabels(['Rejected', 'Approved'])
         st.pyplot(fig)
         st.markdown('</div>', unsafe_allow_html=True)
+
+   
+        
 
     # Key insights based on the model
     st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
