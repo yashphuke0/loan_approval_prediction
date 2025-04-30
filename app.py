@@ -28,7 +28,7 @@ st.markdown("""
         text-align: center;
     }
     .sub-header {
-        color: #94A3B8;
+        color: #a2add9;
         font-size: 1.8rem;
         font-weight: 600;
         margin: 1rem 0;
@@ -266,7 +266,7 @@ with tab2:
         st.markdown('<div class="key-stat-title">F1 Score</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="key-stat-value">{f1:.2%}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    
 
     # Feature importance and confusion matrix in two columns
 
