@@ -278,7 +278,7 @@ with tab1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             affordable_status = "✅" if financial_checks["affordable"] else "❌"
             income_percentage = financial_checks["monthly_emi"] / (applicant_income + coapplicant_income) * 100
-            st.metric("Affordability", f"{income_percentage:.1f}% of Income {affordable_status}")
+            st.metric("Affordability", f"{income_percentage:.4f}% of Income {affordable_status}")
             st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
@@ -286,6 +286,7 @@ with tab1:
             st.metric("Debt-to-Income Ratio", f"{financial_checks['debt_to_income_ratio']:.3f} {dti_status}",
                       delta=f"{'Below' if financial_checks['debt_to_income_ok'] else 'Above'} 0.43 threshold")
             st.markdown('</div>', unsafe_allow_html=True)
+
 
         # Financial feasibility warnings
         if not financial_checks["loan_to_income_ok"]:
