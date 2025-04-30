@@ -438,23 +438,22 @@ with tab2:
 
 
     # Feature importance
+    col1, col2= st.columns([2, 1])
+    with col1;
+        st.markdown("### Feature Importance")
+        feature_importance_df = pd.DataFrame({
+            'Feature': feature_names,
+            'Importance': np.abs(feature_importance)
+        }).sort_values(by='Importance', ascending=False)
     
-    st.markdown("### Feature Importance")
-    feature_importance_df = pd.DataFrame({
-        'Feature': feature_names,
-        'Importance': np.abs(feature_importance)
-    }).sort_values(by='Importance', ascending=False)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
+        ax.set_title('Feature Importance for Loan Approval')
+        ax.set_xlabel('Absolute Importance')
+        st.pyplot(fig)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(x='Importance', y='Feature', data=feature_importance_df, palette='viridis', ax=ax)
-    ax.set_title('Feature Importance for Loan Approval')
-    ax.set_xlabel('Absolute Importance')
-    st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    with col1:
+    with col2:
         # Confusion matrix
         st.markdown("### Confusion Matrix")
         fig, ax = plt.subplots(figsize=(4, 3))
