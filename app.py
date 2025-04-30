@@ -471,11 +471,11 @@ with tab3:
             st.markdown(f"### ❌ Loan is likely to be *REJECTED*.")
 
             if model_prediction == 1 and not financial_checks["financially_feasible"]:
-                st.markdown(f"### Model Confidence for Approval: {probability[1]:.2%}")
+                st.markdown(f"### Model Confidence: {probability[1]:.2%}")
                 st.markdown(f"### Financial Assessment: FAILED")
                 st.markdown("### (Rejected due to financial feasibility checks)")
             else:
-                st.markdown(f"### Model Confidence for Rejection: {probability[0]:.2%}")
+                st.markdown(f"### Model Confidence: {probability[0]:.2%}")
                 if not financial_checks["financially_feasible"]:
                     st.markdown(f"### Financial Assessment: FAILED")
                 else:
