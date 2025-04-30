@@ -439,7 +439,7 @@ with tab2:
 
     # Feature importance
     col1, col2= st.columns([2, 1])
-    with col1;
+    with col1:
         st.markdown("### Feature Importance")
         feature_importance_df = pd.DataFrame({
             'Feature': feature_names,
