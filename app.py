@@ -460,7 +460,7 @@ with tab3:
         st.markdown("### Final Prediction Result")
 
         if final_approval:
-            st.ballons()
+            st.balloons()
             st.markdown('<div class="prediction-box" style="background-color: #DCEDC8;">', unsafe_allow_html=True)
             st.markdown(f"### ✅ Loan is likely to be *APPROVED*!")
             st.markdown(f"### Model Confidence: {probability[1]:.2%}")
