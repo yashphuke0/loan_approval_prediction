@@ -38,7 +38,7 @@ st.markdown("""
     .dashboard-container {
         rgba(239, 246, 255, 0.8);
         border-radius: 8px;
-        padding: 0.7rem;
+        padding: 0.5rem;
         margin-bottom: 1.5rem;
         border: 1px solid #E2E8F0;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -469,7 +469,7 @@ with tab2:
     
 
     # Key insights based on the model
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    
     st.markdown("### Key Factors Affecting Approval")
 
     col1, col2 = st.columns(2)
