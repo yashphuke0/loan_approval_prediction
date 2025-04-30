@@ -46,18 +46,18 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
     monthly_emi = calculate_emi(loan_amount_actual, interest_rate, loan_term)
 
     # Calculate loan to income ratio (monthly)
-    loan_to_income_ratio = (monthly_emi / monthly_income) * 100 if monthly_income > 0 else float('inf')
+    loan_to_income_ratio = (monthly_emi / monthly_income)  if monthly_income > 0 else float('inf')
 
     # Calculate debt to income ratio (monthly) - including the new loan EMI
     total_monthly_debt = monthly_emi + existing_debt
-    debt_to_income_ratio =(total_monthly_debt / monthly_income) * 100 if monthly_income > 0 else float('inf')
+    debt_to_income_ratio =(total_monthly_debt / monthly_income)  if monthly_income > 0 else float('inf')
 
     # Check if the applicant can afford the monthly EMI
     affordable = monthly_emi <= (monthly_income * 0.5)  # Rule of thumb: EMI should not exceed 50% of income
 
     # Check if ratios are within acceptable limits
-    loan_to_income_ok = loan_to_income_ratio <= 40
-    debt_to_income_ok = debt_to_income_ratio <= 43
+    loan_to_income_ok = loan_to_income_ratio <= 0.40
+    debt_to_income_ok = debt_to_income_ratio <= 0.43
 
     return {
         "monthly_emi": monthly_emi,
