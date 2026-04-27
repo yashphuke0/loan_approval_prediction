@@ -6,7 +6,7 @@ import seaborn as sns
 
 # Import custom modules
 from data_utils import load_data, create_input_data
-from model import get_or_train_model, predict_loan_approval
+import model as model_module
 from financial_utils import perform_financial_checks, calculate_affordable_loan
 
 # Set page configuration
@@ -166,7 +166,10 @@ df, raw_df, label_encoders, original_categorical_values = get_processed_data()
 # Train model (cache to avoid retraining)
 @st.cache_resource
 def get_trained_model(df):
-    return get_or_train_model(df)
+    # Support both newer and older model module versions in deployment.
+    if hasattr(model_module, "get_or_train_model"):
+        return model_module.get_or_train_model(df)
+    return model_module.train_model(df)
 
 
 model, scaler, X_test, y_test, y_pred, accuracy, precision, recall, f1, conf_matrix, feature_importance, feature_names = get_trained_model(
@@ -242,7 +245,7 @@ with tab1:
         input_data = create_input_data(applicant_data, label_encoders, feature_names)
 
         # Get prediction from model
-        model_prediction, probability, scaled_input = predict_loan_approval(model, scaler, input_data)
+        model_prediction, probability, scaled_input = model_module.predict_loan_approval(model, scaler, input_data)
 
         # Conduct financial checks
         financial_checks = perform_financial_checks(
