@@ -26,7 +26,7 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
     Perform financial feasibility checks for loan approval
 
     Args:
-        loan_amount (float): Loan amount in thousands
+        loan_amount (float): Loan amount in rupees
         loan_term (int): Loan term in months
         applicant_income (float): Monthly income of applicant
         coapplicant_income (float): Monthly income of co-applicant
@@ -36,14 +36,11 @@ def perform_financial_checks(loan_amount, loan_term, applicant_income, coapplica
     Returns:
         dict: Dictionary containing financial check results
     """
-    # Convert loan amount from thousands to actual amount
-    loan_amount_actual = loan_amount
-
     total_income = applicant_income + coapplicant_income
     monthly_income = total_income
 
     # Calculate monthly EMI
-    monthly_emi = calculate_emi(loan_amount_actual, interest_rate, loan_term)
+    monthly_emi = calculate_emi(loan_amount, interest_rate, loan_term)
 
     # Calculate loan to income ratio (monthly)
     loan_to_income_ratio = (monthly_emi / monthly_income)  if monthly_income > 0 else float('inf')

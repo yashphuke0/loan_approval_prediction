@@ -6,8 +6,8 @@ import seaborn as sns
 
 # Import custom modules
 from data_utils import load_data, create_input_data
-from model import train_model, predict_loan_approval
-from financial_utils import perform_financial_checks
+from model import get_or_train_model, predict_loan_approval
+from financial_utils import perform_financial_checks, calculate_affordable_loan
 
 # Set page configuration
 st.set_page_config(
@@ -166,7 +166,7 @@ df, raw_df, label_encoders, original_categorical_values = get_processed_data()
 # Train model (cache to avoid retraining)
 @st.cache_resource
 def get_trained_model(df):
-    return train_model(df)
+    return get_or_train_model(df)
 
 
 model, scaler, X_test, y_test, y_pred, accuracy, precision, recall, f1, conf_matrix, feature_importance, feature_names = get_trained_model(
@@ -194,7 +194,7 @@ with tab1:
         st.markdown("### Financial Information")
         applicant_income = st.number_input('Applicant Income (monthly)', min_value=1, value=5000)
         coapplicant_income = st.number_input('Coapplicant Income (monthly)', min_value=0, value=0)
-        loan_amount = st.number_input('Loan Amount (thousands)', min_value=10, value=100)
+        loan_amount = st.number_input('Loan Amount (Rs)', min_value=10000, value=100000)
         loan_amount_term = st.number_input('Loan Amount Term (months)', min_value=12, value=360)
         credit_history = st.selectbox('Credit History', options=[1.0, 0.0],
                                       format_func=lambda x: "Good (1.0)" if x == 1.0 else "Bad/Unknown (0.0)")
@@ -265,7 +265,7 @@ with tab1:
 
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.metric("Monthly EMI", f"${financial_checks['monthly_emi']:.2f}")
+            st.metric("Monthly EMI", f"Rs {financial_checks['monthly_emi']:.2f}")
             st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
@@ -277,7 +277,8 @@ with tab1:
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             affordable_status = "✅" if financial_checks["affordable"] else "❌"
-            income_percentage = (financial_checks["monthly_emi"] / (applicant_income + coapplicant_income))*100
+            total_income = applicant_income + coapplicant_income
+            income_percentage = (financial_checks["monthly_emi"] / total_income) * 100 if total_income > 0 else 0
             st.metric("Affordability", f"{income_percentage:.2f}% of Income {affordable_status}")
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -304,34 +305,37 @@ with tab1:
             st.markdown("⚠ *Monthly EMI is too high relative to income.* The loan may not be affordable.")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # Determine model confidence and decision labels in a consistent way.
+        approval_prob = probability[1]
+        rejection_prob = probability[0]
+        model_confidence = approval_prob if model_prediction == 1 else rejection_prob
+
         # Display prediction with enhanced UI
         st.markdown("### Final Prediction Result")
 
         if final_approval:
             st.markdown('<div class="prediction-box" style="background-color: #DCEDC8;">', unsafe_allow_html=True)
             st.markdown(f"### ✅ Loan is likely to be *APPROVED*!")
-            st.markdown(f"### Model Confidence: {probability[1]:.2%}")
-            st.markdown(f"### Financial Assessment: PASSED")
+            st.markdown("**Final Outcome:** Approved (ML + Financial Policy)")
+            st.markdown(f"**ML Assessment:** {model_confidence:.2%} confidence")
+            st.markdown("**Financial Assessment:** Passed")
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.markdown('<div class="prediction-box" style="background-color: #FFCDD2;">', unsafe_allow_html=True)
             st.markdown(f"### ❌ Loan is likely to be *REJECTED*.")
-
+            st.markdown("**Final Outcome:** Rejected (Policy-based override)")
+            st.markdown(f"**ML Assessment:** {model_confidence:.2%} confidence")
+            st.markdown(
+                f"**Financial Assessment:** {'Passed' if financial_checks['financially_feasible'] else 'Failed'}"
+            )
             if model_prediction == 1 and not financial_checks["financially_feasible"]:
-                st.markdown(f"### Model Confidence for Approval: {probability[1]:.2%}")
-                st.markdown(f"### Financial Assessment: FAILED")
-                st.markdown("### (Rejected due to financial feasibility checks)")
-            else:
-                st.markdown(f"### Model Confidence for Rejection: {probability[0]:.2%}")
-                if not financial_checks["financially_feasible"]:
-                    st.markdown(f"### Financial Assessment: FAILED")
-                else:
-                    st.markdown(f"### Financial Assessment: PASSED")
-                    st.markdown("### (Rejected by predictive model)")
+                st.markdown("**Reason:** Applicant passed ML screening but failed affordability and debt policy checks.")
+            elif model_prediction == 0:
+                st.markdown("**Reason:** Rejected by the predictive model.")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # Show factors influencing the ML model decision
-        st.markdown("### Factors Influencing ML Model Decision")
+        # Show factors in business-friendly language
+        st.markdown("### Key Assessment Drivers (ML)")
 
         # Create a simplified feature importance for this specific case
         input_features = pd.DataFrame(scaled_input, columns=feature_names)
@@ -342,29 +346,103 @@ with tab1:
             'Absolute Impact': np.abs(feature_impact)
         }).sort_values(by='Absolute Impact', ascending=False)
 
-        # Display top factors
-        top_factors = feature_impact_df.head(5)
+        # User-friendly labels for report-style display
+        feature_display_names = {
+            "Credit_History": "Credit History",
+            "LoanAmount": "Requested Loan Amount",
+            "EMI": "Estimated EMI",
+            "TotalIncome": "Total Monthly Income",
+            "EMIToIncomeRatio": "EMI to Income Ratio",
+            "Self_Employed": "Employment Type",
+            "CoapplicantIncome": "Co-applicant Income",
+            "Dependents": "Number of Dependents",
+            "ApplicantIncome": "Applicant Income",
+            "Loan_Amount_Term": "Loan Tenure",
+            "Property_Area": "Property Location",
+            "Education": "Education",
+            "Married": "Marital Status",
+            "Gender": "Gender"
+        }
 
-        for idx, row in top_factors.iterrows():
-            factor_name = row['Feature']
-            impact = row['Impact']
-            icon = "✅" if impact > 0 else "❌"
+        # Apply business-direction overrides so affordability indicators read sensibly.
+        adjusted_feature_impact_df = feature_impact_df.copy()
+        total_income = applicant_income + coapplicant_income
+        monthly_emi = financial_checks["monthly_emi"]
 
-            # Get original value before encoding for categorical variables
-            if factor_name in label_encoders:
-                original_value = None
-                for original, encoded in zip(label_encoders[factor_name].classes_,
-                                             range(len(label_encoders[factor_name].classes_))):
-                    if encoded == input_data[0][list(feature_names).index(factor_name)]:
-                        original_value = original
-                        break
-                st.write(
-                    f"{icon} *{factor_name}*: {original_value} {'positively' if impact > 0 else 'negatively'} impacts approval")
+        # "Very low EMI" means <= 30% of monthly income -> strength, else risk.
+        emi_is_strength = total_income > 0 and (monthly_emi / total_income) <= 0.30
+        # "Very high income vs EMI" means income is at least 3x EMI -> strength, else risk.
+        total_income_is_strength = monthly_emi > 0 and (total_income / monthly_emi) >= 3.0
+
+        for feature_name, is_strength in {
+            "EMI": emi_is_strength,
+            "TotalIncome": total_income_is_strength,
+        }.items():
+            feature_rows = adjusted_feature_impact_df["Feature"] == feature_name
+            if feature_rows.any():
+                base_abs_impact = adjusted_feature_impact_df.loc[feature_rows, "Absolute Impact"]
+                adjusted_feature_impact_df.loc[feature_rows, "Impact"] = np.where(
+                    is_strength, base_abs_impact, -base_abs_impact
+                )
+
+        # Split into supporting and risk drivers for clearer reporting.
+        positive_drivers = adjusted_feature_impact_df[adjusted_feature_impact_df["Impact"] > 0].head(3)
+        negative_drivers = adjusted_feature_impact_df[adjusted_feature_impact_df["Impact"] < 0].head(3)
+
+        def format_feature_value(name, raw_value):
+            """Return human-readable values for report display."""
+            if name == "Credit_History":
+                return "Good" if raw_value == 1.0 else "Poor/Unknown"
+            if name in {"ApplicantIncome", "CoapplicantIncome", "LoanAmount", "EMI", "TotalIncome"}:
+                return f"Rs {raw_value:,.2f}"
+            if name == "Loan_Amount_Term":
+                return f"{int(raw_value)} months"
+            if name == "Dependents":
+                return str(int(raw_value)) if float(raw_value).is_integer() else str(raw_value)
+            return raw_value
+
+        def render_driver_rows(drivers_df, is_positive):
+            for _, row in drivers_df.iterrows():
+                factor_name = row["Feature"]
+                display_name = feature_display_names.get(factor_name, factor_name.replace("_", " "))
+                direction_text = "supports approval" if is_positive else "indicates higher risk"
+                icon = "✅" if is_positive else "⚠️"
+
+                if factor_name in label_encoders:
+                    value_to_show = None
+                    for original, encoded in zip(
+                        label_encoders[factor_name].classes_,
+                        range(len(label_encoders[factor_name].classes_))
+                    ):
+                        if encoded == input_data[0][list(feature_names).index(factor_name)]:
+                            value_to_show = original
+                            break
+                else:
+                    raw_value = input_data[0][list(feature_names).index(factor_name)]
+                    value_to_show = format_feature_value(factor_name, raw_value)
+
+                st.write(f"{icon} **{display_name}:** {value_to_show} and {direction_text}.")
+
+        col_pos, col_neg = st.columns(2)
+
+        with col_pos:
+            st.markdown("#### Strengths in this Application")
+            if positive_drivers.empty:
+                st.write("No strong supporting ML drivers identified for this profile.")
             else:
-                # For numerical values
-                value = input_data[0][list(feature_names).index(factor_name)]
-                st.write(
-                    f"{icon} *{factor_name}*: {value} {'positively' if impact > 0 else 'negatively'} impacts approval")
+                render_driver_rows(positive_drivers, is_positive=True)
+
+        with col_neg:
+            st.markdown("#### Risk Indicators to Improve")
+            if negative_drivers.empty:
+                st.write("No major risk indicators were flagged by the ML model for this profile.")
+            else:
+                render_driver_rows(negative_drivers, is_positive=False)
+
+        st.caption(
+            "Note: ML assessment reflects historical approval patterns. "
+            "Final lending outcome also applies financial policy checks."
+        )
 
         # Suggestions for improvement if rejected
         if not final_approval:
@@ -374,20 +452,22 @@ with tab1:
                 st.write("✨ Improving your credit history could significantly increase approval chances")
 
             if income_loan_ratio < 0.01:
-                st.write("✨ Consider either increasing your income or applying for a smaller loan amount")
+                st.write("✨ Consider increasing your monthly income or applying for a smaller loan amount")
 
             if not financial_checks["loan_to_income_ok"]:
-                st.write("✨ Consider a longer loan term to reduce your monthly EMI")
+                st.write("✨ Consider a longer loan tenure to reduce your monthly EMI")
 
             if not financial_checks["debt_to_income_ok"]:
                 st.write("✨ Work on reducing your existing debt before applying for this loan")
 
             if not financial_checks["affordable"]:
-                reduced_loan = (applicant_income + coapplicant_income) * 0.3 * loan_amount_term / (
-                            interest_rate / 100 / 12 * (1 + interest_rate / 100 / 12) * loan_amount_term / (
-                                (1 + interest_rate / 100 / 12) * loan_amount_term - 1))
-                reduced_loan_thousands = reduced_loan / 1000
-                st.write(f"✨ A loan amount of approximately ${reduced_loan_thousands:.2f}K would be more affordable")
+                reduced_loan = calculate_affordable_loan(
+                    monthly_income=applicant_income + coapplicant_income,
+                    interest_rate=interest_rate,
+                    tenure_months=loan_amount_term,
+                    max_emi_percent=0.3
+                )
+                st.write(f"✨ A loan amount of approximately Rs {reduced_loan:,.2f} may be more affordable")
 
             # Look at negative feature impacts for suggestions
             negative_impacts = feature_impact_df[feature_impact_df['Impact'] < 0].sort_values(by='Impact')
@@ -411,7 +491,7 @@ with tab2:
     with col1:
         st.markdown('<div class="key-stat">', unsafe_allow_html=True)
         st.markdown('<div class="key-stat-title" style="color: #ADD8E6" >Accuracy</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="key-stat-value">85.26%</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="key-stat-value">{accuracy:.2%}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:

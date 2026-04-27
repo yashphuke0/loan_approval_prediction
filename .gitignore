@@ -1,0 +1,58 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache/bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build/distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Test/coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Model/checkpoint/temp artifacts
+*.joblib
+*.pkl
+*.h5
+*.ckpt
+*.tmp
